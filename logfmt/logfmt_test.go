@@ -3,11 +3,29 @@ package logfmt
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+type stringer int
+
+func (s stringer) String() string {
+	return fmt.Sprintf("stringer: %d", s)
+}
+
+type textMarshaler int
+
+func (tm textMarshaler) MarshalText() ([]byte, error) {
+	return []byte(fmt.Sprintf("textMarshaler: %d", tm)), nil
+}
+
+type needsSprintf struct {
+	A int
+	B string
+}
 
 func TestWriteTo(t *testing.T) {
 	assert := assert.New(t)
@@ -39,6 +57,19 @@ func TestFormatting(t *testing.T) {
 		{Value: float32(3.14159), Expected: "key=3.14159"},
 		{Value: float64(31.4159), Expected: "key=31.4159"},
 		{Value: int(1), Expected: "key=1"},
+		{Value: int16(2), Expected: "key=2"},
+		{Value: int32(3), Expected: "key=3"},
+		{Value: int64(4), Expected: "key=4"},
+		{Value: int8(5), Expected: "key=5"},
+		{Value: "string", Expected: `key=string`},
+		{Value: uint(1), Expected: "key=1"},
+		{Value: uint16(2), Expected: "key=2"},
+		{Value: uint32(3), Expected: "key=3"},
+		{Value: uint64(4), Expected: "key=4"},
+		{Value: uintptr(3041255), Expected: "key=3041255"},
+		{Value: stringer(44), Expected: `key="stringer: 44"`},
+		{Value: textMarshaler(45), Expected: `key="textMarshaler: 45"`},
+		{Value: needsSprintf{46, "text value"}, Expected: `key="{46 text value}"`},
 	}
 
 	for _, tc := range testCases {
