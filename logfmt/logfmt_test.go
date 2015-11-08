@@ -2,6 +2,7 @@ package logfmt
 
 import (
 	"bytes"
+	"errors"
 	"testing"
 	"time"
 
@@ -31,9 +32,12 @@ func TestFormatting(t *testing.T) {
 	}{
 		{Value: true, Expected: "key=true"},
 		{Value: false, Expected: "key=false"},
+		{Value: byte(0x10), Expected: "key=16"},
 		{Value: complex(float32(10), float32(11)), Expected: "key=(10+11i)"},
 		{Value: complex(float64(10.4), float64(11.5)), Expected: "key=(10.4+11.5i)"},
-		{Value: byte(0x10), Expected: "key=16"},
+		{Value: errors.New("This is an error"), Expected: `key="This is an error"`},
+		{Value: float32(3.14159), Expected: "key=3.14159"},
+		{Value: float64(31.4159), Expected: "key=31.4159"},
 		{Value: int(1), Expected: "key=1"},
 	}
 
