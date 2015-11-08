@@ -31,6 +31,7 @@ func TestWriteTo(t *testing.T) {
 	assert := assert.New(t)
 
 	buf := Buffer{}
+	defer buf.Reset()
 	tm := time.Unix(1234567890, 987654321).UTC()
 	buf.WriteTimestamp(tm)
 	buf.WriteKey("info")
@@ -39,6 +40,20 @@ func TestWriteTo(t *testing.T) {
 	bytes := bytes.Buffer{}
 	buf.WriteTo(&bytes)
 	text := string(bytes.Bytes())
+	assert.Equal("2009-02-13T23:31:30.987654+0000 info key=value", text)
+}
+
+func TestString(t *testing.T) {
+	assert := assert.New(t)
+
+	buf := Buffer{}
+	defer buf.Reset()
+	tm := time.Unix(1234567890, 987654321).UTC()
+	buf.WriteTimestamp(tm)
+	buf.WriteKey("info")
+	buf.WriteProperty("key", "value")
+
+	text := buf.String()
 	assert.Equal("2009-02-13T23:31:30.987654+0000 info key=value", text)
 }
 
@@ -94,5 +109,37 @@ func TestFormatting(t *testing.T) {
 		buf := Buffer{}
 		buf.WriteProperty("key", tc.Value)
 		assert.Equal(tc.Expected, buf.String())
+		assert.Equal(len(buf.String()), buf.Len())
+		assert.True(buf.Cap() >= buf.Len())
+		buf.Reset()
 	}
+}
+
+// for counting allocations in the buffer pool
+var allocCount int
+
+func TestReset(t *testing.T) {
+	assert := assert.New(t)
+
+	// arrange to count every time a buffer is allocated
+	bufferPoolAllocated = func() {
+		allocCount += 1
+	}
+	defer func() { bufferPoolAllocated = func() {} }()
+
+	// clear out the buffer pool, so there will be at least one allocation
+	for bufferPool.Get() != nil {
+	}
+
+	allocCount = 0
+	for i := 0; i < 1000; i++ {
+		buf := Buffer{}
+		buf.WriteTimestamp(time.Now())
+		buf.WriteKey("info")
+		buf.WriteProperty("key", i)
+		s := buf.String()
+		assert.NotEmpty(s)
+		buf.Reset()
+	}
+	assert.Equal(1, allocCount)
 }

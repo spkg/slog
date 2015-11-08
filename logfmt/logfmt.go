@@ -26,10 +26,10 @@ type Buffer struct {
 	buf *bytes.Buffer
 }
 
-// Close releases internal memory used by the buffer and makes that memory
-// available for reuse by other Buffers. Calling Close in programs that log many
+// Reset releases internal memory used by the buffer and makes that memory
+// available for reuse by other Buffers. Calling Reset in programs that log many
 // messages will reduce the pressure on the garbage collector.
-func (b *Buffer) Close() {
+func (b *Buffer) Reset() {
 	if b.buf != nil {
 		releaseBuffer(b.buf)
 		b.buf = nil
