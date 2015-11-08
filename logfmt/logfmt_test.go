@@ -48,6 +48,7 @@ func TestFormatting(t *testing.T) {
 		Value    interface{}
 		Expected string
 	}{
+		// test all of the builtin types
 		{Value: true, Expected: "key=true"},
 		{Value: false, Expected: "key=false"},
 		{Value: byte(0x10), Expected: "key=16"},
@@ -67,9 +68,26 @@ func TestFormatting(t *testing.T) {
 		{Value: uint32(3), Expected: "key=3"},
 		{Value: uint64(4), Expected: "key=4"},
 		{Value: uintptr(3041255), Expected: "key=3041255"},
+
+		// supports fmt.Stringer interface
 		{Value: stringer(44), Expected: `key="stringer: 44"`},
+
+		// supports encoding.TextMarshaler interface
 		{Value: textMarshaler(45), Expected: `key="textMarshaler: 45"`},
+
+		// does not support Stringer or TextMarshaler
 		{Value: needsSprintf{46, "text value"}, Expected: `key="{46 text value}"`},
+
+		// String variants
+		{Value: "noquotes", Expected: "key=noquotes"},
+		{Value: "contains\"quotes\"", Expected: `key="contains\"quotes\""`},
+		{Value: "contains\nnewline", Expected: `key="contains\nnewline"`},
+		{Value: "contains=equals", Expected: `key="contains=equals"`},
+		{Value: "contains\ttabs\t", Expected: `key="contains\ttabs\t"`},
+		{Value: "contains\rCR", Expected: `key="containsCR"`},
+		{Value: "contains space", Expected: `key="contains space"`},
+		{Value: `contains\backslash`, Expected: `key=contains\backslash`},
+		{Value: `contains\backslash and space`, Expected: `key="contains\\backslash and space"`},
 	}
 
 	for _, tc := range testCases {
