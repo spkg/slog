@@ -95,6 +95,6 @@ func (m *Message) Logfmt() string {
 	}
 
 	s := buf.String()
-	buf.Close()
+	buf.Reset()
 	return s
 }
