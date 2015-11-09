@@ -1,47 +1,3 @@
-// Package slog provides structured logging.
-//
-// There are many good logging packages available, and it is worth asking
-// why the world needs another one.
-//
-// Here are some differentiators for this package. Not all of them are
-// unique, but this is the only package (to date) that has all of them.
-//
-// 1. Log messages are not formatted using a printf style interface. Each
-// log message should have a constant message, which makes it easier to
-// filter and search for messages. Any variable information is passed as
-// properties in the message (see the WithValue function).
-//  doSometingWith(a, b)
-//  log.Debug(ctx, "did something",
-//      log.WithValue("a", a),
-//      log.WithValue("b", b))
-//
-// 2. Uses an api that allows for multiple options and parameters to be
-// logged in a single call. (See "Functional options for friendly APIs"
-// by Dave Cheney http://goo.gl/l2KaW3).
-//  if err := doSometing(ctx, a); err != nil {
-//      return log.Error(ctx, "cannot do someting",
-//          log.WithValue("a", a),
-//          log.WithError(err),
-//          log.WithStatus(http.StatusBadRequest))
-//  }
-//
-// 3. When a message is logged, a non-nil *Message value is returned, which
-// can be returned as an error value.
-//  if err := doSometing(); err != nil {
-//      return log.Error(ctx, "cannot doSomething", log.WithError(err))
-//  }
-//
-// 4. This package is context aware (golang.org/x/net/context). Contexts
-// can be created with information that will be logged with the message.
-//  ctx = log.NewContext(ctx, log.Property{"a", "SomeValue"})
-//
-//  // ... do some work and then
-//
-//  // the following message will include "a=SomeValue" from the context
-//  log.Info(ctx, "some message")
-//
-// 5. By default messages are logged to stdout in logfmt format.
-// (https://brandur.org/logfmt)
 package slog
 
 import (
@@ -77,6 +33,16 @@ func Warn(ctx context.Context, text string, opts ...Option) *Message {
 // Returns a non-nil *Message, which can be used as an error value.
 func Error(ctx context.Context, text string, opts ...Option) *Message {
 	return Default.Error(ctx, text, opts...)
+}
+
+// Flags returns the flags associated with the default logger.
+func Flags() int {
+	return Default.Flags()
+}
+
+// SetFlags sets the flags for the default logger.
+func SetFlags(flags int) {
+	Default.SetFlags(flags)
 }
 
 // Set the output writer for the default logger.

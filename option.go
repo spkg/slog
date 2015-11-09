@@ -13,7 +13,7 @@ func WithError(err error) Option {
 	}
 }
 
-// WithValue sets a parameter with a name and a value.
+// WithValue sets a property with a name and a value.
 func WithValue(name string, value interface{}) Option {
 	return func(m *Message) {
 		m.Properties = append(m.Properties, Property{name, value})

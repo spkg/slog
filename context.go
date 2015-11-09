@@ -27,7 +27,7 @@ func NewContext(ctx context.Context, properties ...Property) context.Context {
 	// extract log data from the context
 	data, _ := ctx.Value(keyLogData).(*logData)
 
-	// iterate backwards through the supplied parameters:
+	// iterate backwards through the supplied properties:
 	// this way they will be logged in the order that
 	// they were supplied to this function
 	for i := len(properties) - 1; i >= 0; i-- {

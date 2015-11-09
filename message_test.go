@@ -2,6 +2,7 @@ package slog
 
 import (
 	"errors"
+	"io/ioutil"
 	"testing"
 	"time"
 
@@ -30,6 +31,11 @@ func TestNewMessage(t *testing.T) {
 
 func TestMessageError(t *testing.T) {
 	assert := assert.New(t)
+
+	// set output to be discarded, and reset at end of test
+	SetOutput(ioutil.Discard)
+	defer func() { Default = New() }()
+
 	ctx := context.Background()
 	ctx = NewContext(ctx, Property{"a", "b"})
 	m := Error(ctx, "This is the error",

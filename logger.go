@@ -8,11 +8,24 @@ import (
 	"golang.org/x/net/context"
 )
 
+const (
+	// Bits or'ed together to control what is printed.
+	LTimestamp = 1 << iota // Include timestamp in output
+	LUTC                   // If LTimestamp is set, use UTC
+
+	LLF // On Windows, print LF only, not CRLF. Required for testing
+
+	LDefault = LTimestamp
+)
+
 type Logger interface {
 	Debug(ctx context.Context, text string, opts ...Option) *Message
 	Info(ctx context.Context, text string, opts ...Option) *Message
 	Warn(ctx context.Context, text string, opts ...Option) *Message
 	Error(ctx context.Context, text string, opts ...Option) *Message
+
+	Flags() int
+	SetFlags(flags int)
 
 	NewWriter(ctx context.Context) io.Writer
 	SetOutput(w io.Writer)
@@ -29,6 +42,7 @@ type loggerImpl struct {
 	out      io.Writer  // destination for output
 	handlers []Handler  // list of handlers
 	minLevel Level      // minimum level to log
+	flags    int        // flag options
 }
 
 // New returns a new Logger with default settings. Writes to stdout, and
@@ -71,6 +85,18 @@ func (l *loggerImpl) Error(ctx context.Context, text string, opts ...Option) *Me
 	return m
 }
 
+func (l *loggerImpl) Flags() int {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.flags
+}
+
+func (l *loggerImpl) SetFlags(flags int) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.flags = flags
+}
+
 func (l *loggerImpl) NewWriter(ctx context.Context) io.Writer {
 	return &writer{
 		ctx:    ctx,
@@ -105,8 +131,17 @@ func (l *loggerImpl) output(m *Message) {
 
 	if m.Level >= l.minLevel {
 		if l.output != nil {
-			buf := m.logfmtBuffer()
-			buf.WriteNewLine()
+			buf := m.logfmtBuffer(l.flags)
+			// <HACK>
+			// We need this hack to print LF only so that the Example
+			// code will work on Windows. Of CRLF is printed on Windows,
+			// the example tests fail because the CR is not trimmed.
+			if l.flags&LLF != 0 {
+				buf.WriteNewLine()
+			} else {
+				buf.WriteEOL()
+			}
+			// </HACK>
 			buf.WriteTo(l.out)
 			buf.Reset()
 		}

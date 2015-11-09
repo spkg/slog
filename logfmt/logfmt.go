@@ -126,10 +126,17 @@ func (b *Buffer) spacer() error {
 	return nil
 }
 
+// WriteNewLine writes a single new line byte to the buffer.
+func (b *Buffer) WriteNewLine() error {
+	b.allocate()
+	_, err := b.buf.Write(eol)
+	return err
+}
+
 // WriteNewLine writes the OS-specific new line bytes to the buffer.
 // On Windows the new line is 0xd, 0xa. For all other operating systems
 // the new line is 0x0a.
-func (b *Buffer) WriteNewLine() error {
+func (b *Buffer) WriteEOL() error {
 	b.allocate()
 	_, err := b.buf.Write(eol)
 	return err
