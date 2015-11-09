@@ -17,7 +17,7 @@ out there that may suit your purpose:
 
 ## Key-value pairs
 
-Package `slog` does not encourage the use of `Printf`-like methods for formatting messages. Instead it encourages
+Package `slog` does not provide the use of `Printf`-like methods for formatting messages. Instead it encourages
 the use of key-value pairs for logging properties associated with a log message. So, instead of of
 
 ```
@@ -41,7 +41,7 @@ Logging key-value pairs looks like:
 which results in a log message like:
 
 ```
- error: cannot open file filename=/etc/hosts error="file not found"
+ error: msg="cannot open file" filename=/etc/hosts error="file not found"
 ```
 
 This idea has gained traction as a [best practice](http://dev.splunk.com/view/logging-best-practices/SP-CAAADP6),
