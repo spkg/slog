@@ -35,16 +35,6 @@ func Error(ctx context.Context, text string, opts ...Option) *Message {
 	return Default.Error(ctx, text, opts...)
 }
 
-// Flags returns the flags associated with the default logger.
-func Flags() int {
-	return Default.Flags()
-}
-
-// SetFlags sets the flags for the default logger.
-func SetFlags(flags int) {
-	Default.SetFlags(flags)
-}
-
 // Set the output writer for the default logger.
 func SetOutput(w io.Writer) {
 	Default.SetOutput(w)

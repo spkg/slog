@@ -85,22 +85,16 @@ func (m *Message) SetStatus(status int) {
 // See https://brandur.org/logfmt for a description of logfmt. Returns number
 // of bytes written to w.
 func (m *Message) Logfmt() string {
-	buf := m.logfmtBuffer(LTimestamp)
+	buf := m.logfmtBuffer()
 	s := buf.String()
 	buf.Reset()
 	return s
 }
 
-func (m *Message) logfmtBuffer(flags int) logfmt.Buffer {
+func (m *Message) logfmtBuffer() logfmt.Buffer {
 	var buf logfmt.Buffer
 
-	if flags&LTimestamp != 0 {
-		ts := m.Timestamp
-		if flags&LUTC != 0 {
-			ts = ts.UTC()
-		}
-		buf.WriteTimestamp(ts)
-	}
+	buf.WriteTimestamp(m.Timestamp)
 	buf.WriteKey(m.Level.String())
 	buf.WriteProperty("msg", m.Text)
 	if m.Err != nil {
