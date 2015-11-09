@@ -56,10 +56,9 @@ var (
 )
 
 // Debug logs a debug level message to the default logger.
-// Unlike Info, Warn and Error, this function does not return a pointer to the message.
-// The reason is that Debug should never be used to return an error result.
-func Debug(ctx context.Context, text string, opts ...Option) {
-	Default.Debug(ctx, text, opts...)
+// Returns a non-nil *Message, which can be used as an error value.
+func Debug(ctx context.Context, text string, opts ...Option) *Message {
+	return Default.Debug(ctx, text, opts...)
 }
 
 // Info logs an informational level message to the default logger.

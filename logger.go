@@ -9,7 +9,7 @@ import (
 )
 
 type Logger interface {
-	Debug(ctx context.Context, text string, opts ...Option)
+	Debug(ctx context.Context, text string, opts ...Option) *Message
 	Info(ctx context.Context, text string, opts ...Option) *Message
 	Warn(ctx context.Context, text string, opts ...Option) *Message
 	Error(ctx context.Context, text string, opts ...Option) *Message
@@ -43,10 +43,11 @@ func New() Logger {
 	}
 }
 
-func (l *loggerImpl) Debug(ctx context.Context, text string, opts ...Option) {
+func (l *loggerImpl) Debug(ctx context.Context, text string, opts ...Option) *Message {
 	m := newMessage(ctx, LevelDebug, text)
 	m.applyOpts(opts)
 	l.output(m)
+	return m
 }
 
 func (l *loggerImpl) Info(ctx context.Context, text string, opts ...Option) *Message {
