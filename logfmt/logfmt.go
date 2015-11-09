@@ -8,6 +8,7 @@ import (
 	"encoding"
 	"fmt"
 	"io"
+	"runtime"
 	"time"
 )
 
@@ -15,6 +16,19 @@ var (
 	// The time format used for timestamps. Can be changed to a differnt format.
 	TimeFormat = "2006-01-02T15:04:05.000000-0700"
 )
+
+var (
+	// end of line bytes
+	eol []byte
+)
+
+func init() {
+	if runtime.GOOS == "windows" {
+		eol = []byte{0xd, 0x0a}
+	} else {
+		eol = []byte{0x0a}
+	}
+}
 
 // Buffer is used for building up logfmt messages. Once the
 // message is built, the text can be obtained by the String method,
@@ -110,6 +124,15 @@ func (b *Buffer) spacer() error {
 		return err
 	}
 	return nil
+}
+
+// WriteNewLine writes the OS-specific new line bytes to the buffer.
+// On Windows the new line is 0xd, 0xa. For all other operating systems
+// the new line is 0x0a.
+func (b *Buffer) WriteNewLine() error {
+	b.allocate()
+	_, err := b.buf.Write(eol)
+	return err
 }
 
 // writeValueString writes a string value to the buffer buf.

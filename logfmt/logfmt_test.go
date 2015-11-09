@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"runtime"
 	"testing"
 	"time"
 
@@ -112,6 +113,18 @@ func TestFormatting(t *testing.T) {
 		assert.Equal(len(buf.String()), buf.Len())
 		assert.True(buf.Cap() >= buf.Len())
 		buf.Reset()
+	}
+}
+
+func TestNewLine(t *testing.T) {
+	assert := assert.New(t)
+	buf := Buffer{}
+	defer buf.Reset()
+	buf.WriteNewLine()
+	if runtime.GOOS == "windows" {
+		assert.Equal("\r\n", buf.String())
+	} else {
+		assert.Equal("\n", buf.String())
 	}
 }
 

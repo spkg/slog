@@ -5,25 +5,12 @@ import (
 	"golang.org/x/net/context"
 )
 
-type Parameters []log.Property
-
-func messingAround(ctx context.Context, params Parameters) {
-
-}
-
-func moreMessingAround() {
-	ctx := context.Background()
-	messingAround(ctx, Parameters{{"Key", 1}, {"P2", "xxx"}})
-	messingAround(ctx, Parameters{{"Key", 1}})
-}
-
 func ExampleOption(ctx context.Context, n1, n2 int) error {
 	if err := doSomethingWith(n1, n2); err != nil {
-		return log.Error("cannot doSomething",
+		return log.Error(ctx, "cannot doSomething",
 			log.WithValue("n1", n1),
 			log.WithValue("n2", n2),
-			log.WithError(err),
-			log.WithContext(ctx))
+			log.WithError(err))
 	}
 
 	// .. more processing and then ...
@@ -31,9 +18,9 @@ func ExampleOption(ctx context.Context, n1, n2 int) error {
 	return nil
 }
 
-func ExampleWithValue(n1, n2 int) error {
+func ExampleWithValue(ctx context.Context, n1, n2 int) error {
 	if err := doSomethingWith(n1, n2); err != nil {
-		return log.Error("doSomethingWith failed",
+		return log.Error(ctx, "doSomethingWith failed",
 			log.WithValue("n1", n1),
 			log.WithValue("n2", n2))
 	}
@@ -43,9 +30,9 @@ func ExampleWithValue(n1, n2 int) error {
 	return nil
 }
 
-func ExampleWithError() error {
+func ExampleWithError(ctx context.Context) error {
 	if err := doSomething(); err != nil {
-		return log.Error("doSomething failed",
+		return log.Error(ctx, "doSomething failed",
 			log.WithError(err))
 	}
 
@@ -60,13 +47,11 @@ func ExampleNewContext(ctx context.Context, n1, n2 int) error {
 		log.Property{"n2", n2})
 
 	if err := doSomethingWith(n1, n2); err != nil {
-		return log.Error("doSomethingWith failed",
-			log.WithError(err),
-			log.WithContext(ctx))
+		return log.Error(ctx, "doSomethingWith failed",
+			log.WithError(err))
 	}
 
-	log.Debug("did something with",
-		log.WithContext(ctx))
+	log.Debug(ctx, "did something with")
 
 	// ... more processing and then ...
 

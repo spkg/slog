@@ -3,6 +3,8 @@ package slog
 import (
 	"time"
 
+	"golang.org/x/net/context"
+
 	"github.com/spkg/slog/logfmt"
 )
 
@@ -13,7 +15,7 @@ type Message struct {
 	Level      Level
 	Text       string
 	Err        error
-	Parameters []Property
+	Properties []Property
 	Context    []Property
 	code       string
 	status     int
@@ -25,12 +27,16 @@ type Property struct {
 	Value interface{}
 }
 
-func newMessage(level Level, text string) *Message {
+func newMessage(ctx context.Context, level Level, text string) *Message {
 	m := &Message{
 		Timestamp: time.Now(),
 		Level:     level,
 		Text:      text,
 	}
+	for data := fromContext(ctx); data != nil; data = data.Prev {
+		m.Context = append(m.Context, Property{data.Key, data.Value})
+	}
+
 	return m
 }
 
@@ -58,6 +64,11 @@ func (m *Message) Code() string {
 	return m.code
 }
 
+// SetCode sets the Code property.
+func (m *Message) SetCode(code string) {
+	m.code = code
+}
+
 // Status returns any status code associated with the message.
 // This is intended to be a HTTP status code, but the application can
 // use any numbering scheme.
@@ -65,10 +76,22 @@ func (m *Message) Status() int {
 	return m.status
 }
 
+// SetStatus sets the status code associated with the message.
+func (m *Message) SetStatus(status int) {
+	m.status = status
+}
+
 // Logfmt writes the contents of the message to the buffer in logfmt format.
 // See https://brandur.org/logfmt for a description of logfmt. Returns number
 // of bytes written to w.
 func (m *Message) Logfmt() string {
+	buf := m.logfmtBuffer()
+	s := buf.String()
+	buf.Reset()
+	return s
+}
+
+func (m *Message) logfmtBuffer() logfmt.Buffer {
 	var buf logfmt.Buffer
 
 	buf.WriteTimestamp(m.Timestamp)
@@ -78,7 +101,7 @@ func (m *Message) Logfmt() string {
 		buf.WriteProperty("error", m.Err.Error())
 	}
 
-	for _, p := range m.Parameters {
+	for _, p := range m.Properties {
 		buf.WriteProperty(p.Key, p.Value)
 	}
 
@@ -94,7 +117,5 @@ func (m *Message) Logfmt() string {
 		buf.WriteProperty("status", m.status)
 	}
 
-	s := buf.String()
-	buf.Reset()
-	return s
+	return buf
 }
