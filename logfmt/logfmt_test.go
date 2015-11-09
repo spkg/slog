@@ -111,7 +111,6 @@ func TestFormatting(t *testing.T) {
 		buf.WriteProperty("key", tc.Value)
 		assert.Equal(tc.Expected, buf.String())
 		assert.Equal(len(buf.String()), buf.Len())
-		assert.True(buf.Cap() >= buf.Len())
 		buf.Reset()
 	}
 }

@@ -63,12 +63,6 @@ func (b *Buffer) Len() int {
 	return b.buf.Len()
 }
 
-// Cap returns the capacity of the internal buffer used to format messages.
-func (b *Buffer) Cap() int {
-	b.allocate()
-	return b.buf.Cap()
-}
-
 // WriteTo implements the io.WriterTo interface. It writes the formatted
 // message to the writer w.
 func (b *Buffer) WriteTo(w io.Writer) (int64, error) {
