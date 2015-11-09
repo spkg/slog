@@ -57,7 +57,7 @@ logged. The log levels available in the `slog` package are:
 A debug message might involve quite low-level information, such as entering and leaving a function. 
 * **Info** for messages that indicate an event of interest, but is not an error condition. An example might be
 logging an info message when a new user signs up for a service. This might be useful for counting, but it
-is not a cause for concern
+is not a cause for concern for the dev-ops team.
 * **Warn** for messages that indicate a condition that is not necessarily a cause for concern by the dev-ops
 team in its own right, but could be a cause for concern if it were to happen on a regular basis. An example
 of a warning message might be an attempt to login with an invalid username/password combination. Not a problem
@@ -73,7 +73,7 @@ operations teams for that application.
 
 It might be worth noting that there is a growing opinion that fewer levels might be better than many
 levels. Dave Cheney, for example, promotes an argument that 
-[warning messages should not be eliminated](http://dave.cheney.net/2015/11/05/lets-talk-about-logging).
+[warning messages should be eliminated](http://dave.cheney.net/2015/11/05/lets-talk-about-logging).
 
 ## With Context
 
