@@ -62,7 +62,7 @@ func TestMessageStatus(t *testing.T) {
 func TestMessageLogfmt(t *testing.T) {
 	assert := assert.New(t)
 	m := Message{
-		Timestamp: time.Unix(1234567890, 987654321),
+		Timestamp: time.Unix(1234567890, 987654321).UTC(),
 		Level:     LevelError,
 		Text:      "This is the message",
 		Err:       errors.New("Error message"),
@@ -78,7 +78,7 @@ func TestMessageLogfmt(t *testing.T) {
 		status: 400,
 	}
 
-	expected := `2009-02-14T09:31:30.987654+1000 error msg="This is the message"` +
+	expected := `2009-02-13T23:31:30.987654+0000 error msg="This is the message"` +
 		` error="Error message" a=b c=d e=f g=h code=CODE status=400`
 	assert.Equal(expected, m.Logfmt())
 }
