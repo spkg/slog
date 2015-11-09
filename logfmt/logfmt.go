@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	// The time format used for timestamps. Can be changed to a differnt format.
+	// The time format used for timestamps.
 	TimeFormat = "2006-01-02T15:04:05.000000-0700"
 )
 
@@ -33,7 +33,7 @@ func init() {
 // Buffer is used for building up logfmt messages. Once the
 // message is built, the text can be obtained by the String method,
 // or the message can be written to an io.Writer using the WriteTo method.
-// The calling program should call the Close method after it is finished with
+// The calling program should call the Reset method after it is finished with
 // the buffer because then internal buffers can be re-used to take pressure off
 // the garbage collector.
 type Buffer struct {
