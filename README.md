@@ -21,7 +21,7 @@ out there that may suit your purpose:
 Package `slog` does not provide the use of `Printf`-like methods for formatting messages. Instead it encourages
 the use of key-value pairs for logging properties associated with a log message. So, instead of of
 
-```
+```Go
  log.Printf("[error] cannot open file %s: %s", filename, err.Error())
 ``` 
 
@@ -33,7 +33,7 @@ which would look like:
 
 Logging key-value pairs looks like:
 
-```
+```Go
  slog.Error(ctx, "cannot open file",
      slog.WithValue("filename", filename),
      slog.WithError(err))
@@ -79,11 +79,106 @@ levels. Dave Cheney, for example, promotes an argument that
 
 Package `slog` makes heavy use of the `golang.org/x/net/context` package. If your application does not
 use this context package, then you will probably want to look at one of the other logging packages, as
-`slog` will not deliver much benefit to you.
+`slog` will not deliver much benefit to you. If you are unfamiliar with the `golang.org/x/net/context` 
+package there is an excellent article on the [Go Blog](https://blog.golang.org/context). 
 
-The `golang.org/x/net/context` package is described well on the [Go Blog](https://blog.golang.org/context). To
-quote that site, this package "makes it easy to pass request-scoped values, cancelation signals
-and deadlines across API boundaries to all the goroutines involved in handling a request". 
+The `golang.org/x/net/context` package is useful when writing servers that handle requests. Common
+examples are HTTP servers, RPC servers and batch processors. As each request is processed, multiple
+goroutines may be started to assist with the processing of the request. By convention each function 
+involved in the processing of the request receives as its first parameter a `ctx` variable of type
+`context.Context`. The context makes it easy to pass values associated with the request, and `slog`
+makes use of this by adding log properties to the request.
 
-*TODO: finish this section*
+```Go
+func Login(ctx context.Context, username, password string) (*User, error) {
+    // create a new context with log properties
+    ctx = slog.NewContext(ctx,
+        log.Property{"operation", "Login"}, 
+        log.Property{"username", username})
+
+    // ... pass request onto database access functions ...
+    user, err := db.FindUserByUsername(username)
+    if err != nil {
+        // will log `error msg="cannot find user" operation="Login" username="fnurk"`
+        return nil, slog.Error(ctx, "cannot find user", log.WithError(err))
+    }
+
+    // ... more processing ...
+
+    return user, nil
+ }
+```
+
+In the above example, the `Login` function attaches some properties to the context, so if at a 
+later time an error condition is logged, the properties in the context are logged with the message.
+
+# When to log an error message
+
+When using `slog` to log error messages, there is a reasonable simple rule of thumb for 
+logging error messages. 
+
+* If a function with a context calls a function without a context, then log any error
+and return the message logged as the error.
+
+	```Go
+	func FuncWithContext(ctx context.Context, int someArg) error {
+	    // calling a function that does not accept a context, could
+	    // be some external library
+	    if err := DoThatOneThing(someArg); err != nil {
+	        // log a message and return that message as the error
+	        return slog.Error(ctx, "cannot do that one thing",
+	            slog.WithError(err)) 
+	    }
+	
+	    // ... do more processing ...
+	    return nil
+	}
+	```
+
+* If a function with a context calls another function with a context, then there is no need 
+log to log an error if the only processing to be performed is to pass the error back to
+the caller.
+
+	```Go
+	func FuncWithContext(ctx context.Context, int someArg) error {
+	    // calling another function with context: that function
+        // will log an error if it encounters it and return
+	    if err := DoOneThingWithContext(ctx, someArg); err != nil {
+	        // don't log a message: the DoOneThingWithContext function
+            // has already logged and all we are doing is passing the
+            // error back to our caller
+	        return nil, err 
+	    }
+	
+	    // ... do more processing ...
+	    return nil
+	}
+	```  
+
+* If a function with a context calls another function with a context and receives an
+error response, then if there is some non-trivial error handling then there may be
+scope for additional logging.
+
+	```Go
+	func FuncWithContext(ctx context.Context, int someArg) error {
+	    // calling another function with context: that function
+        // will log an error if it encounters it and return
+	    if err := DoOneThingWithContext(ctx, someArg); err != nil {
+            slog.Info(ctx, "cleaning up")
+            DoSomeCleanup(ctx, someArg)
+	        return nil, err 
+	    }
+	
+	    // ... do more processing ...
+	    return nil
+	}
+	```  
+ 
+
+## Messages are errors
+
+As seen in the above examples, the `slog.Error`, `slog.Warn`, `slog.Info` and `slog.Debug` functions
+all return a non-nil `*slog.Message`. This non-nil pointer implements the `error` interface, and
+can be returned as an error value.
+
 
