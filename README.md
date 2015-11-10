@@ -114,7 +114,7 @@ later time an error condition is logged, the properties in the context are logge
 
 # When to log an error message
 
-When using `slog` to log error messages, there is a few simple rules of thumb for 
+When using `slog` to log error messages, there are a few simple rules of thumb for 
 logging error messages. 
 
 * If a function with a context calls a function without a context, then log any error
