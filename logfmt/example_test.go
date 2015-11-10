@@ -8,9 +8,8 @@ import (
 )
 
 func Example() {
-	// create a buffer and ensure that it's
-	// internal memory buffer is released when no
-	// longer needed
+	// create a buffer and ensure that its internal memory buffer is
+	// available for re-use when no longer needed
 	buf := logfmt.Buffer{}
 	defer buf.Reset()
 
