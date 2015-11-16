@@ -93,14 +93,14 @@ makes use of this by adding log properties to the request.
 func Login(ctx context.Context, username, password string) (*User, error) {
     // create a new context with log properties
     ctx = slog.NewContext(ctx,
-        log.Property{"operation", "Login"}, 
-        log.Property{"username", username})
+        slog.Property{"operation", "Login"}, 
+        slog.Property{"username", username})
 
     // ... pass request onto database access functions ...
     user, err := db.FindUserByUsername(username)
     if err != nil {
         // will log `error msg="cannot find user" operation="Login" username="fnurk"`
-        return nil, slog.Error(ctx, "cannot find user", log.WithError(err))
+        return nil, slog.Error(ctx, "cannot find user", slog.WithError(err))
     }
 
     // ... more processing ...
