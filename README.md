@@ -181,4 +181,56 @@ As seen in the above examples, the `slog.Error`, `slog.Warn`, `slog.Info` and `s
 all return a non-nil `*slog.Message`. This non-nil pointer implements the `error` interface, and
 can be returned as an error value.
 
+## Messages can have a status code
 
+In the common case of a HTTP server, it may be useful to pass back a suggested HTTP status code
+when logging an error:
+
+	```Go
+	if user, err := FindUser(username); err != nil {
+		return slog.Error(ctx, "cannot find user", slog.WithError(err))
+	} else if user == nil {
+		// log message and include a hint at a suitable HTTP status code
+		return slog.Warn(ctx, "user not found",
+			slog.WithStatusCode(http.StatusNotFound))
+	}
+
+	// ... continue processing user ...
+	```
+
+The HTTP middleware can then make use of the status code later if necessary
+
+	```Go
+	// statusCodeFromError chooses a HTTP status code based on an error.
+	func statusCodeFromError(err error) int {
+		// default to internal error
+		statusCode := http.StatusInternalServerError
+
+		type statusCoder interface {
+			StatusCode() int
+		}
+
+		if errWithStatusCode, ok := err.(statusCoder); ok {
+			if sc := errWithStatusCode.StatusCode(); sc > 0 {
+				statusCode = sc
+			}
+		}
+
+		return statusCode
+	}
+	```
+
+## Messages can have an error code
+
+There are times when it may be useful to pass back a code to inform the requesting party that a
+specific error condition has occurred.
+
+	```Go
+	// optimistic locking exception has occurred
+	return slog.Info(ctx, "optimistic locking error",
+		slog.WithErrorCode("OptimisticLockingError"))
+	```
+
+TODO: we have played around with an `errors`-like package with functions `StatusCode(error) int` and 
+`ErrorCode(error) string`, but haven't got around to publishing it yet. It keeps changing with every
+project we use it on.
