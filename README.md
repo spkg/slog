@@ -3,7 +3,8 @@
 
 [![GoDoc](https://godoc.org/github.com/spkg/slog/logfmt?status.svg)](https://godoc.org/github.com/spkg/slog)
 [![license](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/spkg/slog/master/LICENSE.md)
-[![Build Status](https://travis-ci.org/spkg/slog.svg?branch=master)](https://travis-ci.org/spkg/slog)
+[![Build Status (Linux)](https://travis-ci.org/spkg/slog.svg?branch=master)](https://travis-ci.org/spkg/slog)
+[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/febtndgk5w4uv90h?svg=true)](https://ci.appveyor.com/project/jjeffery/slog)
 [![Coverage](http://gocover.io/_badge/github.com/spkg/slog)](http://gocover.io/github.com/spkg/slog)
 
 ## Another logging package? Really?
