@@ -112,7 +112,7 @@ func Login(ctx context.Context, username, password string) (*User, error) {
 In the above example, the `Login` function attaches some properties to the context, so if at a 
 later time an error condition is logged, the properties in the context are logged with the message.
 
-# When to log an error message
+## When to log an error message
 
 When using `slog` to log error messages, there are a few simple rules of thumb for 
 logging error messages. 
@@ -186,50 +186,50 @@ can be returned as an error value.
 In the common case of a HTTP server, it may be useful to pass back a suggested HTTP status code
 when logging an error:
 
-	```Go
-	if user, err := FindUser(username); err != nil {
-		return slog.Error(ctx, "cannot find user", slog.WithError(err))
-	} else if user == nil {
-		// log message and include a hint at a suitable HTTP status code
-		return slog.Warn(ctx, "user not found",
-			slog.WithStatusCode(http.StatusNotFound))
-	}
+```Go
+if user, err := FindUser(username); err != nil {
+	return slog.Error(ctx, "cannot find user", slog.WithError(err))
+} else if user == nil {
+	// log message and include a hint at a suitable HTTP status code
+	return slog.Warn(ctx, "user not found",
+		slog.WithStatusCode(http.StatusNotFound))
+}
 
-	// ... continue processing user ...
-	```
+// ... continue processing user ...
+```
 
 The HTTP middleware can then make use of the status code later if necessary
 
-	```Go
-	// statusCodeFromError chooses a HTTP status code based on an error.
-	func statusCodeFromError(err error) int {
-		// default to internal error
-		statusCode := http.StatusInternalServerError
+```Go
+// statusCodeFromError chooses a HTTP status code based on an error.
+func statusCodeFromError(err error) int {
+	// default to internal error
+	statusCode := http.StatusInternalServerError
 
-		type statusCoder interface {
-			StatusCode() int
-		}
-
-		if errWithStatusCode, ok := err.(statusCoder); ok {
-			if sc := errWithStatusCode.StatusCode(); sc > 0 {
-				statusCode = sc
-			}
-		}
-
-		return statusCode
+	type statusCoder interface {
+		StatusCode() int
 	}
-	```
+
+	if errWithStatusCode, ok := err.(statusCoder); ok {
+		if sc := errWithStatusCode.StatusCode(); sc > 0 {
+			statusCode = sc
+		}
+	}
+
+	return statusCode
+}
+```
 
 ## Messages can have an error code
 
 There are times when it may be useful to pass back a code to inform the requesting party that a
 specific error condition has occurred.
 
-	```Go
-	// optimistic locking exception has occurred
-	return slog.Info(ctx, "optimistic locking error",
-		slog.WithErrorCode("OptimisticLockingError"))
-	```
+```Go
+// optimistic locking exception has occurred
+return slog.Info(ctx, "optimistic locking error",
+	slog.WithErrorCode("OptimisticLockingError"))
+```
 
 TODO: we have played around with an `errors`-like package with functions `StatusCode(error) int` and 
 `ErrorCode(error) string`, but haven't got around to publishing it yet. It keeps changing with every
