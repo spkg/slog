@@ -228,9 +228,9 @@ specific error condition has occurred.
 ```Go
 // optimistic locking exception has occurred
 return slog.Info(ctx, "optimistic locking error",
-	slog.WithErrorCode("OptimisticLockingError"))
+	slog.WithCode("OptimisticLockingError"))
 ```
 
 TODO: we have played around with an `errors`-like package with functions `StatusCode(error) int` and 
-`ErrorCode(error) string`, but haven't got around to publishing it yet. It keeps changing with every
+`Code(error) string`, but haven't got around to publishing it yet. It keeps changing with every
 project we use it on.
