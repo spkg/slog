@@ -1,5 +1,5 @@
 # slog
-##Structured, Levelled Logging with Context
+##Structured, Leveled Logging with Context
 
 [![GoDoc](https://godoc.org/github.com/spkg/slog/logfmt?status.svg)](https://godoc.org/github.com/spkg/slog)
 [![license](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/spkg/slog/master/LICENSE.md)
@@ -48,7 +48,7 @@ which results in a log message like:
 This idea has gained traction as a [best practice](http://dev.splunk.com/view/logging-best-practices/SP-CAAADP6),
 and the result is both readable by humans, and can be [parsed quite easily](https://github.com/kr/logfmt).
 
-## Levelled
+## Leveled
 
 Like many other logging packages, `slog` requires the calling program to assign a level to each message
 logged. The log levels available in the `slog` package are:
@@ -93,14 +93,14 @@ makes use of this by adding log properties to the request.
 func Login(ctx context.Context, username, password string) (*User, error) {
     // create a new context with log properties
     ctx = slog.NewContext(ctx,
-        log.Property{"operation", "Login"}, 
-        log.Property{"username", username})
+        slog.Property{"operation", "Login"}, 
+        slog.Property{"username", username})
 
     // ... pass request onto database access functions ...
     user, err := db.FindUserByUsername(username)
     if err != nil {
         // will log `error msg="cannot find user" operation="Login" username="fnurk"`
-        return nil, slog.Error(ctx, "cannot find user", log.WithError(err))
+        return nil, slog.Error(ctx, "cannot find user", slog.WithError(err))
     }
 
     // ... more processing ...
