@@ -24,7 +24,7 @@ func TestNewMessage(t *testing.T) {
 	assert.Equal("xxx", m.code)
 
 	errSample := errors.New("error here")
-	m.applyOpts([]Option{WithStatus(1), WithValue("a", "b"), WithError(errSample)})
+	m.applyOpts([]Option{WithStatusCode(1), WithValue("a", "b"), WithError(errSample)})
 	assert.Equal(1, m.status)
 	assert.Exactly(errSample, m.Err)
 }
