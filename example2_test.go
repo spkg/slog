@@ -76,8 +76,8 @@ func ExampleWithError(ctx context.Context) error {
 
 func ExampleNewContext(ctx context.Context, n1, n2 int) error {
 	ctx = slog.NewContext(ctx,
-		slog.Property{"n1", n1},
-		slog.Property{"n2", n2})
+		slog.Property{Key: "n1", Value: n1},
+		slog.Property{Key: "n2", Value: n2})
 
 	if err := doSomethingWith(n1, n2); err != nil {
 		return slog.Error(ctx, "doSomethingWith failed",

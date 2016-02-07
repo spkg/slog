@@ -26,8 +26,8 @@ func Example() {
 func doFirstThing(ctx context.Context, a, b int) error {
 	// add some logging to the context
 	ctx = log.NewContext(ctx,
-		log.Property{"a", a},
-		log.Property{"b", b})
+		log.Property{Key: "a", Value: a},
+		log.Property{Key: "b", Value: b})
 
 	// ... perform some more processing and then
 
