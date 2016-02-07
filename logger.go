@@ -104,7 +104,7 @@ func (l *loggerImpl) output(m *Message) {
 	defer l.mu.Unlock()
 
 	if m.Level >= l.minLevel {
-		if l.output != nil {
+		if l.out != nil {
 			buf := m.logfmtBuffer()
 			buf.WriteEOL()
 			buf.WriteTo(l.out)
