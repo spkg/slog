@@ -16,7 +16,7 @@ const (
 	keyLogData contextKey = iota
 )
 
-// NewContext returns a new context that has one or more properites associated with it
+// NewContext returns a new context that has one or more properties associated with it
 // for logging purposes. The properties will be included in any log message logged with
 // this context.
 func NewContext(ctx context.Context, properties ...Property) context.Context {
