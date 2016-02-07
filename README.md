@@ -1,5 +1,5 @@
 # slog
-##Structured, Leveled Logging with Context
+## Structured, Leveled Logging with Context
 
 [![GoDoc](https://godoc.org/github.com/spkg/slog/logfmt?status.svg)](https://godoc.org/github.com/spkg/slog)
 [![license](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/spkg/slog/master/LICENSE.md)
@@ -8,13 +8,14 @@
 
 ## Another logging package? Really?
 
-Yes. `slog` is another logging package. It's probably worth listing some of the more mature logging packages 
+Yes. `slog` is another logging package. It's probably worth listing some of the more mature logging packages
 out there that may suit your purpose:
 
 * [log: Go language standard library package](https://golang.org/pkg/log/)
 * [glog: Leveled execution logs for Go](https://github.com/golang/glog)
 * [logrus: Structured, pluggable logging for Go](https://github.com/Sirupsen/logrus)
 * [loggo: Module level logging for Go](https://godoc.org/github.com/juju/loggo)
+* [log15: Powerful, composable logging for Go](https://github.com/inconshreveable/log15)
 
 ## Structured
 
@@ -23,7 +24,7 @@ the use of key-value pairs for logging properties associated with a log message.
 
 ```Go
  log.Printf("[error] cannot open file %s: %s", filename, err.Error())
-``` 
+```
 
 which would look like:
 
@@ -54,7 +55,7 @@ Like many other logging packages, `slog` requires the calling program to assign 
 logged. The log levels available in the `slog` package are:
 
 * **Debug** for messages that are of interest to software developers when they are debugging the application.
-A debug message might involve quite low-level information, such as entering and leaving a function. 
+A debug message might involve quite low-level information, such as entering and leaving a function.
 * **Info** for messages that indicate an event of interest, but is not an error condition. An example might be
 logging an info message when a new user signs up for a service. This might be useful for counting, but it
 is not a cause for concern for the dev-ops team.
@@ -72,19 +73,19 @@ for any particular message can depend on the application, and the agreed standar
 operations teams for that application.
 
 It might be worth noting that there is a growing opinion that fewer levels might be better than many
-levels. Dave Cheney, for example, promotes an argument that 
+levels. Dave Cheney, for example, promotes an argument that
 [warning messages should be eliminated](http://dave.cheney.net/2015/11/05/lets-talk-about-logging).
 
 ## With Context
 
 Package `slog` makes heavy use of the `golang.org/x/net/context` package. If your application does not
 use this context package, then you will probably want to look at one of the other logging packages, as
-`slog` will not deliver much benefit to you. If you are unfamiliar with the `golang.org/x/net/context` 
-package there is an excellent article on the [Go Blog](https://blog.golang.org/context). 
+`slog` will not deliver much benefit to you. If you are unfamiliar with the `golang.org/x/net/context`
+package there is an excellent article on the [Go Blog](https://blog.golang.org/context).
 
 The `golang.org/x/net/context` package is useful when writing servers that handle requests. Common
 examples are HTTP servers, RPC servers and batch processors. As each request is processed, multiple
-goroutines may be started to assist with the processing of the request. By convention each function 
+goroutines may be started to assist with the processing of the request. By convention each function
 involved in the processing of the request receives as its first parameter a `ctx` variable of type
 `context.Context`. The context makes it easy to pass values associated with the request, and `slog`
 makes use of this by adding log properties to the request.
@@ -93,7 +94,7 @@ makes use of this by adding log properties to the request.
 func Login(ctx context.Context, username, password string) (*User, error) {
     // create a new context with log properties
     ctx = slog.NewContext(ctx,
-        slog.Property{"operation", "Login"}, 
+        slog.Property{"operation", "Login"},
         slog.Property{"username", username})
 
     // ... pass request onto database access functions ...
@@ -109,13 +110,13 @@ func Login(ctx context.Context, username, password string) (*User, error) {
  }
 ```
 
-In the above example, the `Login` function attaches some properties to the context, so if at a 
+In the above example, the `Login` function attaches some properties to the context, so if at a
 later time an error condition is logged, the properties in the context are logged with the message.
 
 ## When to log an error message
 
-When using `slog` to log error messages, there are a few simple rules of thumb for 
-logging error messages. 
+When using `slog` to log error messages, there are a few simple rules of thumb for
+logging error messages.
 
 * If a function with a context calls a function without a context, then log any error
 and return the message logged as the error.
@@ -127,15 +128,15 @@ and return the message logged as the error.
 	    if err := DoThatOneThing(someArg); err != nil {
 	        // log a message and return that message as the error
 	        return slog.Error(ctx, "cannot do that one thing",
-	            slog.WithError(err)) 
+	            slog.WithError(err))
 	    }
-	
+
 	    // ... do more processing ...
 	    return nil
 	}
 	```
 
-* If a function with a context calls another function with a context, then there is no need 
+* If a function with a context calls another function with a context, then there is no need
 log to log an error if the only processing to be performed is to pass the error back to
 the caller.
 
@@ -147,9 +148,9 @@ the caller.
 	        // don't log a message: the DoOneThingWithContext function
             // has already logged and all we are doing is passing the
             // error back to our caller
-	        return nil, err 
+	        return nil, err
 	    }
-	
+
 	    // ... do more processing ...
 	    return nil
 	}
@@ -166,14 +167,14 @@ scope for additional logging.
 	    if err := DoOneThingWithContext(ctx, someArg); err != nil {
             slog.Info(ctx, "cleaning up")
             DoSomeCleanup(ctx, someArg)
-	        return nil, err 
+	        return nil, err
 	    }
-	
+
 	    // ... do more processing ...
 	    return nil
 	}
 	```  
- 
+
 
 ## Messages are errors
 
@@ -231,6 +232,6 @@ return slog.Info(ctx, "optimistic locking error",
 	slog.WithCode("OptimisticLockingError"))
 ```
 
-TODO: we have played around with an `errors`-like package with functions `StatusCode(error) int` and 
+TODO: we have played around with an `errors`-like package with functions `StatusCode(error) int` and
 `Code(error) string`, but haven't got around to publishing it yet. It keeps changing with every
 project we use it on.
