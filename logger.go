@@ -8,6 +8,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// Logger is an interface for logging.
 type Logger interface {
 	Debug(ctx context.Context, text string, opts ...Option) *Message
 	Info(ctx context.Context, text string, opts ...Option) *Message
@@ -20,6 +21,9 @@ type Logger interface {
 	AddHandler(h Handler)
 }
 
+// Handler is an interface for message handlers. A message
+// handler is added to a Logger to perform arbitrary process
+// of log messages.
 type Handler interface {
 	Handle(msgs []*Message)
 }

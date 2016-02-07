@@ -9,6 +9,7 @@ import (
 // Level indicates the level of a log message.
 type Level int
 
+// Values for Level.
 const (
 	LevelDebug   Level = iota // Debugging only
 	LevelInfo                 // Informational
@@ -27,8 +28,8 @@ var (
 )
 
 // String implements the String interface.
-func (s Level) String() string {
-	switch s {
+func (lvl Level) String() string {
+	switch lvl {
 	case LevelDebug:
 		return "debug"
 	case LevelInfo:
@@ -38,7 +39,7 @@ func (s Level) String() string {
 	case LevelError:
 		return "error"
 	}
-	return fmt.Sprintf("unknown %d", s)
+	return fmt.Sprintf("unknown %d", lvl)
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

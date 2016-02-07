@@ -35,18 +35,18 @@ func Error(ctx context.Context, text string, opts ...Option) *Message {
 	return Default.Error(ctx, text, opts...)
 }
 
-// Set the output writer for the default logger.
+// SetOutput sets the output writer for the default logger.
 func SetOutput(w io.Writer) {
 	Default.SetOutput(w)
 }
 
-// Set the minimum log level for the default logger. By default
+// SetMinLevel sets the minimum log level for the default logger. By default
 // the minimum log level is LevelInfo.
 func SetMinLevel(level Level) {
 	Default.SetMinLevel(level)
 }
 
-// Appends the handler to the list of handlers for the default logger.
+// AddHandler appends the handler to the list of handlers for the default logger.
 func AddHandler(h Handler) {
 	Default.AddHandler(h)
 }
