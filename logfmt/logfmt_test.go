@@ -135,7 +135,7 @@ func TestReset(t *testing.T) {
 
 	// arrange to count every time a buffer is allocated
 	bufferPoolAllocated = func() {
-		allocCount += 1
+		allocCount++
 	}
 	defer func() { bufferPoolAllocated = func() {} }()
 

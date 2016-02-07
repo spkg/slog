@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	// The time format used for timestamps.
+	// TimeFormat is the time format used for timestamps.
 	TimeFormat = "2006-01-02T15:04:05.000000-0700"
 )
 
@@ -127,7 +127,7 @@ func (b *Buffer) WriteNewLine() error {
 	return err
 }
 
-// WriteNewLine writes the OS-specific new line bytes to the buffer.
+// WriteEOL writes the OS-specific new line bytes to the buffer.
 // On Windows the new line is 0xd, 0xa. For all other operating systems
 // the new line is 0x0a.
 func (b *Buffer) WriteEOL() error {
@@ -285,11 +285,11 @@ func writeProperty(buf *bytes.Buffer, key string, value interface{}) error {
 	}
 
 	if v, ok := value.(encoding.TextMarshaler); ok {
-		if b, err := v.MarshalText(); err != nil {
+		b, err := v.MarshalText()
+		if err != nil {
 			return err
-		} else {
-			return writeValueString(buf, string(b))
 		}
+		return writeValueString(buf, string(b))
 	}
 
 	return writeValueString(buf, fmt.Sprint(value))
