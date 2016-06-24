@@ -6,7 +6,7 @@
 [![Build Status (Linux)](https://travis-ci.org/spkg/slog.svg?branch=master)](https://travis-ci.org/spkg/slog)
 [![Build status (Windows)](https://ci.appveyor.com/api/projects/status/febtndgk5w4uv90h?svg=true)](https://ci.appveyor.com/project/jjeffery/slog)
 [![Coverage](http://gocover.io/_badge/github.com/spkg/slog)](http://gocover.io/github.com/spkg/slog)
-[![GoReportCard](http://goreportcard.com/badge/spkg/slog)](http://goreportcard.com/report/spkg/slog)
+[![GoReportCard](https://goreportcard.com/badge/github.com/spkg/slog)](https://goreportcard.com/report/github.com/spkg/slog)
 
 ## Another logging package? Really?
 
