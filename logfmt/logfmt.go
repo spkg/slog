@@ -263,6 +263,8 @@ func writeProperty(buf *bytes.Buffer, key string, value interface{}) error {
 		return err
 	case string:
 		return writeValueString(buf, v)
+	case time.Time:
+		return writeValueString(buf, v.Format(TimeFormat))
 	case uint:
 		_, err = fmt.Fprint(buf, v)
 		return err
