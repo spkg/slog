@@ -59,6 +59,8 @@ func TestString(t *testing.T) {
 }
 
 func TestFormatting(t *testing.T) {
+	locLondon, _ := time.LoadLocation("Europe/London")
+	locNewYork, _ := time.LoadLocation("America/New_York")
 	assert := assert.New(t)
 	testCases := []struct {
 		Value    interface{}
@@ -104,6 +106,10 @@ func TestFormatting(t *testing.T) {
 		{Value: "contains space", Expected: `key="contains space"`},
 		{Value: `contains\backslash`, Expected: `key=contains\backslash`},
 		{Value: `contains\backslash and space`, Expected: `key="contains\\backslash and space"`},
+
+		// Time
+		{Value: time.Date(2016, 11, 30, 12, 30, 28, 763876243, locLondon), Expected: "key=2016-11-30T12:30:28.763876+0000"},
+		{Value: time.Date(2016, 11, 30, 12, 30, 28, 763876243, locNewYork), Expected: "key=2016-11-30T12:30:28.763876-0500"},
 	}
 
 	for _, tc := range testCases {
