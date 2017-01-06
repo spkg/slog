@@ -5,7 +5,6 @@
 [![license](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/spkg/slog/master/LICENSE.md)
 [![Build Status (Linux)](https://travis-ci.org/spkg/slog.svg?branch=master)](https://travis-ci.org/spkg/slog)
 [![Build status (Windows)](https://ci.appveyor.com/api/projects/status/febtndgk5w4uv90h?svg=true)](https://ci.appveyor.com/project/jjeffery/slog)
-[![Coverage](http://gocover.io/_badge/github.com/spkg/slog)](http://gocover.io/github.com/spkg/slog)
 [![GoReportCard](https://goreportcard.com/badge/github.com/spkg/slog)](https://goreportcard.com/report/github.com/spkg/slog)
 
 ## Another logging package? Really?
@@ -18,6 +17,9 @@ out there that may suit your purpose:
 * [logrus: Structured, pluggable logging for Go](https://github.com/Sirupsen/logrus)
 * [loggo: Module level logging for Go](https://godoc.org/github.com/juju/loggo)
 * [log15: Powerful, composable logging for Go](https://github.com/inconshreveable/log15)
+
+Please note that this package is not under active development. It has some good ideas, but there are just too 
+many other good logging packages that have wide support and active development.
 
 ## Structured
 
